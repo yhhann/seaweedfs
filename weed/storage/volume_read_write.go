@@ -42,7 +42,7 @@ func (v *Volume) Destroy() (err error) {
 	}
 	v.Close()
 	os.Remove(v.FileName() + ".dat")
-	if v.nm!=nil{
+	if v.nm != nil {
 		err = v.nm.Destroy()
 	}
 	os.Remove(v.FileName() + ".cpd")
@@ -158,6 +158,9 @@ func (v *Volume) readNeedle(n *Needle) (int, error) {
 	}
 	if nv.Size == TombstoneFileSize {
 		return -1, errors.New("Already Deleted")
+	}
+	if nv.Size == 0 {
+		return 0, nil
 	}
 	err := n.ReadData(v.dataFile, int64(nv.Offset)*NeedlePaddingSize, nv.Size, v.Version())
 	if err != nil {
